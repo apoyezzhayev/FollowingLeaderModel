@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from Vehicle import Vehicle
 import plot_routines as pr
 import pickle
-
+from tqdm import tqdm
 
 def initialize():
     '''
@@ -45,11 +45,12 @@ def initialize():
     #enable_platoons = True
     
     #model = 'krauss' # Krauss
-    #model = 'idm' # IDM
-    model = 'iidm' # Improved IDM
+    model = 'idm' # IDM
+    # model = 'iidm' # Improved IDM
     #model = 'gipps' # Gipps
     #model = 'helly' # Helly
     #model = 'platoon' # Platoon
+    # model = 'gm'
     
     vehicles = []
     is_acc = False
@@ -164,9 +165,9 @@ def run_simulation(vehicles, dt, total_time):
     time = []
     time2 = []
     ss_throughput = []
-    
-    while step*dt < total_time:
-        step += 1
+
+    for step in tqdm(range(1, int(total_time / dt), 1)):
+        # step += 1
 
         if i == 0 and i < sz and vehicles[i].get_position() >= sensor_loc and vehicles[i+1].get_speed() > 0:
             theta0 = vehicles[i+1].tau + float(vehicles[i+1].g_min+vehicles[i+1].l)/vehicles[i].get_max_speed()
