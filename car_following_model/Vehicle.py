@@ -114,6 +114,20 @@ class Vehicle:
 
         return
 
+    def step_gm(self, x_l, v_l, dt=1):
+        if self.id == 1:
+            x_l = self.stop_x + self.l + self.g_min
+            v_l = 0
+
+        self.gap = x_l - self.x - self.l
+        self.a_actual = self.a * (v_l - self.v) / self.gap
+        new_v = self.v + self.a_actual * dt
+        new_v = np.max([0, new_v])
+        # TODO: ask about it
+        self.x = self.x + ((self.v + new_v) / 2) * dt
+        self.a_actual = float(new_v - self.v) / dt
+        self.v = new_v
+
     def step_krauss(self, x_l, v_l, dt=1):
         '''
         x_l - position of the leading car
@@ -387,7 +401,8 @@ class Vehicle:
             self.step_helly(x_l, v_l, dt=dt)
         elif self.model == 'platoon':
             self.step_platoon(leader, dt=dt)
-
+        elif self.model == 'gm':
+            self.step_gm(x_l, v_l, dt=dt)
         self.update_arrays()
 
         return
