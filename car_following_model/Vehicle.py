@@ -49,6 +49,8 @@ class Vehicle:
         self.leader_trajectory = [x + l + g_min]
         self.flow = [0]
 
+        self.alpha = 13
+
         return
 
     def update_flow_history(self):
@@ -117,13 +119,20 @@ class Vehicle:
     def step_gm(self, x_l, v_l, dt=1):
         if self.id == 1:
             x_l = self.stop_x + self.l + self.g_min
-            v_l = 0
-
+            v_l = self.v_max
+            # time_to_stop = float(self.v / self.b)
+            # if (self.v * time_to_stop / 2) >= (self.stop_x - self.x):  # deceleration
+            #     new_v = np.max([(self.v - self.b * dt), 0])
+            # else:
+            #     new_v = np.min([(self.v + self.a * dt), self.v_max])  # acceleration
+        # else:
         self.gap = x_l - self.x - self.l
-        self.a_actual = self.a * (v_l - self.v) / self.gap
+        # TODO: how to set alpha
+        self.a_actual = min(self.alpha * (v_l - self.v) / self.gap, self.a)
         new_v = self.v + self.a_actual * dt
         new_v = np.max([0, new_v])
-        # TODO: ask about it
+
+        # TODO: is it a proper way to update the position
         self.x = self.x + ((self.v + new_v) / 2) * dt
         self.a_actual = float(new_v - self.v) / dt
         self.v = new_v
