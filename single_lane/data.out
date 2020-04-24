@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on Fri Apr 24 13:55:58 2020 by Eclipse SUMO Version 1.4.0
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="single_lane/hello.net.xml"/>
+        <route-files value="single_lane/hello_2.rou.xml"/>
+        <additional-files value="single_lane/hello.det.xml"/>
+    </input>
+
+    <time>
+        <begin value="0"/>
+        <end value="10000"/>
+        <step-length value="0.1"/>
+    </time>
+
+    <traci_server>
+        <remote-port value="8873"/>
+    </traci_server>
+
+    <gui_only>
+        <gui-settings-file value="single_lane/hello.settings.xml"/>
+        <tracker-interval value="0.1"/>
+    </gui_only>
+
+</configuration>
+-->
+
+<detector xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/det_e1_file.xsd">
+    <interval begin="0.00" end="1.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="1.00" end="2.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="2.00" end="3.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="3.00" end="4.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="4.00" end="5.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="5.00" end="6.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="6.00" end="7.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="7.00" end="8.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="8.00" end="9.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="9.00" end="10.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="10.00" end="11.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="11.00" end="12.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="12.00" end="13.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="13.00" end="14.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="14.00" end="15.00" id="sensor" nVehContrib="1" flow="3600.00" occupancy="15.72" speed="31.80" harmonicMeanSpeed="31.80" length="5.00" nVehEntered="1"/>
+    <interval begin="15.00" end="16.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="16.00" end="17.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="17.00" end="18.00" id="sensor" nVehContrib="1" flow="3600.00" occupancy="17.76" speed="28.15" harmonicMeanSpeed="28.15" length="5.00" nVehEntered="1"/>
+    <interval begin="18.00" end="19.00" id="sensor" nVehContrib="1" flow="3600.00" occupancy="17.77" speed="28.14" harmonicMeanSpeed="28.14" length="5.00" nVehEntered="1"/>
+    <interval begin="19.00" end="20.00" id="sensor" nVehContrib="1" flow="3600.00" occupancy="17.00" speed="29.41" harmonicMeanSpeed="29.41" length="5.00" nVehEntered="1"/>
+    <interval begin="20.00" end="21.00" id="sensor" nVehContrib="1" flow="3600.00" occupancy="16.18" speed="30.91" harmonicMeanSpeed="30.91" length="5.00" nVehEntered="1"/>
+    <interval begin="21.00" end="22.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="22.00" end="23.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+    <interval begin="23.00" end="24.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="5.50" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="1"/>
+    <interval begin="24.00" end="25.00" id="sensor" nVehContrib="1" flow="3600.00" occupancy="14.56" speed="24.93" harmonicMeanSpeed="24.93" length="5.00" nVehEntered="0"/>
+    <interval begin="25.00" end="26.00" id="sensor" nVehContrib="1" flow="3600.00" occupancy="20.06" speed="24.92" harmonicMeanSpeed="24.92" length="5.00" nVehEntered="1"/>
+    <interval begin="26.00" end="27.00" id="sensor" nVehContrib="1" flow="3600.00" occupancy="19.27" speed="25.95" harmonicMeanSpeed="25.95" length="5.00" nVehEntered="1"/>
+    <interval begin="27.00" end="28.00" id="sensor" nVehContrib="1" flow="3600.00" occupancy="18.96" speed="26.38" harmonicMeanSpeed="26.38" length="5.00" nVehEntered="1"/>
+    <interval begin="28.00" end="29.00" id="sensor" nVehContrib="0" flow="0.00" occupancy="18.44" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="1"/>
+    <interval begin="29.00" end="30.00" id="sensor" nVehContrib="1" flow="3600.00" occupancy="1.01" speed="25.71" harmonicMeanSpeed="25.71" length="5.00" nVehEntered="0"/>
+    <interval begin="30.00" end="31.00" id="sensor" nVehContrib="1" flow="3600.00" occupancy="19.52" speed="25.62" harmonicMeanSpeed="25.62" length="5.00" nVehEntered="1"/>
+    <interval begin="31.00" end="32.00" id="sensor" nVehContrib="1" flow="3600.00" occupancy="18.77" speed="26.64" harmonicMeanSpeed="26.64" length="5.00" nVehEntered="1"/>
+    <interval begin="32.00" end="33.00" id="sensor" nVehContrib="1" flow="3600.00" occupancy="17.42" speed="28.71" harmonicMeanSpeed="28.71" length="5.00" nVehEntered="1"/>
+    <interval begin="33.00" end="34.00" id="sensor" nVehContrib="1" flow="3600.00" occupancy="16.39" speed="30.51" harmonicMeanSpeed="30.51" length="5.00" nVehEntered="1"/>
+    <interval begin="34.00" end="35.00" id="sensor" nVehContrib="1" flow="3600.00" occupancy="16.82" speed="29.73" harmonicMeanSpeed="29.73" length="5.00" nVehEntered="1"/>
+    <interval begin="35.00" end="36.00" id="sensor" nVehContrib="1" flow="3600.00" occupancy="17.98" speed="27.81" harmonicMeanSpeed="27.81" length="5.00" nVehEntered="1"/>
+</detector>
