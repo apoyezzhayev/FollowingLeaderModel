@@ -7,6 +7,8 @@ import subprocess
 import sys
 
 # import python modules from $SUMO_HOME/tools directory
+from tqdm import tqdm
+
 try:
     sys.path.append(os.path.join(os.path.dirname(os.path.realpath(
         __file__)), '..', "tools"))
@@ -51,6 +53,11 @@ class Simulation():
         sys.stdout.flush()
         print('Finished simulation')
         self.sumo_process.wait()
+
+    def __iter__(self):
+        for step in tqdm(range(0, int(self.run_time * (1 / self.dt))), position=0):
+            traci.simulationStep()
+            yield step, step * self.dt
 
 
 # get_options function for SUMO
