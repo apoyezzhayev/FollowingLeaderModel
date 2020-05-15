@@ -10,7 +10,7 @@
 
     <time>
         <begin value="0"/>
-        <end value="10000"/>
+        <end value="100"/>
     </time>
 
     <gui_only>
