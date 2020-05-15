@@ -4,12 +4,15 @@ from traci import vehicle
 
 
 class VehiclesSimulation:
-    def __init__(self, lanes, dt=0.05):
+    def __init__(self, lanes, dt=0.05, model='gm'):
         """
         Updates states of all lanes
-        :param freq: frequency of update in seconds
+        :param lanes: all lanes - dict
+        :param dt: simulation interval
+        :param model: name of model: `gm` or `platoon`
         """
         self.dt = dt
+        self.model = model
         self.lanes = lanes
         self.vehicles = {}
 
@@ -24,14 +27,18 @@ class VehiclesSimulation:
 
         for veh_id, vehicle in self.vehicles.items():
             leader = self.get_leader(vehicle)
-            vehicle.step(leader, self.lanes[vehicle.lane_id].alpha)
+            if self.model == 'gm':
+                vehicle.step_gm(leader, self.lanes[vehicle.lane_id].alpha)
+            elif self.model == 'platoon':
+                vehicle.step_platoon(leader)
+
 
     def get_leader(self, vehicle):
         leader = vehicle.leader_id
         if leader is None:
             return leader
         else:
-            leader_id, dest= leader
+            leader_id, dest = leader
         if leader_id == '': leader_id = None
         leader = self.vehicles.get(leader_id, None)
         return leader
@@ -87,7 +94,7 @@ class Vehicle:
     def v(self, v):
         vehicle.setSpeed(self.id, v)
 
-    def step(self, leader=None, alpha=1):
+    def step_gm(self, leader=None, alpha=1):
         if leader is None:
             self.v = -1  # max permitted speed with safety rules
             return
@@ -101,4 +108,8 @@ class Vehicle:
 
             a_actual = float(new_v - self.v) / self.dt  # if one wants to write it
             self.v = new_v
+            # We don't need to set it manually, SUMO will do it for us
             # self.x = self.x + ((self.v + new_v) / 2) * self.dt
+
+    def step_platoon(self, leader=None):
+        pass
