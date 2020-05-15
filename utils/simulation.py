@@ -22,8 +22,17 @@ except ImportError:
 import traci
 
 
-class Simulation():
+class Simulation:
+
     def __init__(self, options, dt=0.1, run_time=100, no_gui=False):
+        """
+        Creates context manager which runs TraCI on sumo server and closes it after finishing
+        The returned object must be used as an iterator for simulation
+        :param options: command line argumets
+        :param dt: simulation step
+        :param run_time: number of seconds
+        :param no_gui: if True disables GUI to speed up simulation
+        """
         self._port = 8873  # the port used for communicating with your sumo instance
         self.options = options
         self.dt = dt
@@ -41,8 +50,11 @@ class Simulation():
         # this is the normal way of using traci. sumo is started as a
         # subprocess and then the python script connects and runs
         self.sumo_process = subprocess.Popen(
-            [sumoBinary, "-c", self.options.c, "--step-length", str(self.dt), "--remote-port",
-             str(self._port)], stdout=sys.stdout, stderr=sys.stderr)
+            [sumoBinary, "-c", self.options.c,
+             "--step-length", str(self.dt),
+             "--remote-port", str(self._port),
+             # "-a", "maryland/edge_output_gen_GMModel.xml"
+             ], stdout=sys.stdout, stderr=sys.stderr)
         print('Initialized traci on port %d' % self._port)
 
         traci.init(self._port)
