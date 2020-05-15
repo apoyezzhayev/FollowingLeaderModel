@@ -1,74 +1,45 @@
-from collections import defaultdict
-from collections import namedtuple
+import pickle
 
-import matplotlib.pyplot as plt
-import numpy as np
-from traci import lane
+from traci import constants as tc
+from traci import lane as tl
 
 
 class Lane:
-    _state_cls = namedtuple('LaneState', ['v', 'rho', 'Q'])
-
-    def __init__(self, id, eps=1e-5):
+    def __init__(self, id, dv_dr_func=None):
         self.id = id
-        self.eps = eps
-        self._state = []
-        self._prev_vehicles = set()
+        self._buffer_state = None  # v, rho, q
+        self._length = tl.getLength(self.id)
+        self.dv_dr = dv_dr_func
 
-    def step(self):
-        vehicles = set(lane.getLastStepVehicleIDs(self.id))
-        new_vehicles = vehicles.difference(self._prev_vehicles)
-        self._prev_vehicles = vehicles
-
-        self._state.append(self._state_cls(lane.getLastStepMeanSpeed(self.id),
-                                           lane.getLastStepOccupancy(self.id),
-                                           len(new_vehicles)))
+    def update(self, state):
+        mean_speed = state[tc.LAST_STEP_MEAN_SPEED]
+        num = state[tc.LAST_STEP_VEHICLE_NUMBER]
+        mean_density = num / self._length / 1000.
+        mean_flow = mean_density * mean_speed
+        self._buffer_state = (mean_speed, mean_density, mean_flow)
 
     @property
     def alpha(self):
-        if len(self._state) == 1:
-            return 0
+        density = self._buffer_state[1]
+        if self.dv_dr is None:
+            return 1
         else:
-            v, rho = self._state[-1].v, self._state[-1].rho
-            d_rho = self._state[-2].rho - rho
-            d_v = self._state[-2].v - v
-            alpha = -rho * d_v / (d_rho + self.eps)
-            return alpha
-
-    @property
-    def cur_state(self):
-        return self._state[-1]
-
-    @property
-    def state_history(self):
-        return self._state
-
-    def fundamental_diagram(self):
-        states = np.array(self._state)
-        v, rho, Q = tuple([states[:, i] for i in range(states.shape[-1])])
-        plt.scatter(rho, v)
-        plt.xlabel('rho, %occupied ~(veh/m)')
-        plt.ylabel('v, m/s')
-        plt.show()
-        plt.scatter(rho, Q)
-        plt.xlabel('rho, %occupied ~(veh/m)')
-        plt.ylabel('Q, veh/s')
-        plt.show()
+            return -density * self.dv_dr(density)
 
 
-class LanesSimulation:
-    def __init__(self, eps=1e-5, dt=10):
-        self.dt = dt
-        self._state = defaultdict(list)
-        self.lanes = [Lane(id, eps) for id in lane.getIDList()]
+class LaneSimulation:
+    def __init__(self, dv_dr=None, lane_ids=None):
+        if dv_dr is not None:
+            with open(dv_dr, 'r') as f:
+                dv_dr = pickle.load(f)
+        self.dv_dr = dv_dr
+
+        self.lanes = {id: Lane(id, dv_dr.get(id)) for id in (tl.getIDList() if lane_ids is None else lane_ids)}
+
+        for lane_id in self.lanes.keys():
+            tl.subscribe(lane_id, [tc.LAST_STEP_MEAN_SPEED, tc.LAST_STEP_VEHICLE_NUMBER])
 
     def step(self):
-        for lane in self.lanes: lane.step()
-
-    @property
-    def alphas(self):
-        return {lane.id: lane.alpha for lane in self.lanes}
-
-    @property
-    def state(self):
-        return {lane.id: lane.cur_state for lane in self.lanes}
+        out = tl.getAllSubscriptionResults()
+        for lane_id, res in out.items():
+            self.lanes[lane_id].update(res)
