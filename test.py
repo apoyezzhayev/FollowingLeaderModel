@@ -16,7 +16,7 @@ from utils.vehicles import VehiclesSimulation
 
 def run(run_time):
     with Simulation(options, run_time=run_time, no_gui=False, dt=0.1) as sim:
-        lanes_sim = LaneSimulation(dv_dr='dvdr.pickle')
+        lanes_sim = LaneSimulation(dv_dr='dvdr_gm.pickle')
         vehicles_sim = VehiclesSimulation(lanes_sim.lanes, model='platoon')
         # Get lanes
         for step, t in sim:
@@ -36,7 +36,7 @@ def run(run_time):
 
 if __name__ == "__main__":
     parser = sumo_basic_parser()
-    # options = parser.parse_args('-c maryland/testmap.sumocfg'.split(' '))
+    options = parser.parse_args('-c maryland/testmap.sumocfg'.split(' '))
     # options = parser.parse_args('-c ../lab_1/inno.sumocfg'.split(' '))
-    options = parser.parse_args('-c single_lane/hello.sumocfg'.split(' '))
+    # options = parser.parse_args('-c single_lane/hello.sumocfg'.split(' '))
     run(run_time=1000)
