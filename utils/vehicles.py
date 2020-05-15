@@ -2,6 +2,7 @@ import numpy as np
 import traci
 from traci import vehicle
 
+EPS = 1e-6
 
 class VehiclesSimulation:
     def __init__(self, lanes, dt=0.05, model='gm'):
@@ -45,7 +46,7 @@ class VehiclesSimulation:
 
 
 class Vehicle:
-    def __init__(self, id, dt=0.05, min_gap=4):
+    def __init__(self, id, dt=0.05, min_gap=4, tau=2.05):
         '''
         id - vehicle number
         x - position in meters
@@ -61,7 +62,9 @@ class Vehicle:
         self.id = id
         self.l = vehicle.getLength(self.id)
         self.max_a = vehicle.getAccel(self.id)
+        self.max_b = vehicle.getDecel(self.id)
         self.min_gap = min_gap
+        self.tau = tau
 
         self.dt = dt
 
@@ -94,6 +97,10 @@ class Vehicle:
     def v(self, v):
         vehicle.setSpeed(self.id, v)
 
+    @property
+    def a_actual(self):
+        return vehicle.getAcceleration(self.id)
+
     def step_gm(self, leader=None, alpha=1):
         if leader is None:
             self.v = -1  # max permitted speed with safety rules
@@ -106,10 +113,61 @@ class Vehicle:
             new_v = self.v + a_estimate * self.dt
             new_v = np.max([0, new_v])
 
-            a_actual = float(new_v - self.v) / self.dt  # if one wants to write it
+            # self.a_actual = float(new_v - self.v) / self.dt  # if one wants to write it
             self.v = new_v
             # We don't need to set it manually, SUMO will do it for us
             # self.x = self.x + ((self.v + new_v) / 2) * self.dt
 
     def step_platoon(self, leader=None):
-        pass
+        '''
+        leader - vehicle in front, if such exists.
+        dt - size of the simulation step in seconds.
+        '''
+        if leader is None:
+            self.v = -1  # max permitted speed with safety rules
+            # print('Veh: %s, speed: %.2f' % (self.id, self.v))
+            return
+        else:
+            x_l, v_l = leader.x, leader.v
+            alpha = 2
+            beta = 2
+            c = 1  # c% ACC, (1-c)% IIDM
+            b = self.max_b
+
+            a_bar = np.min([leader.a_actual, self.max_a])
+            gap = x_l - self.x - self.l
+
+            a_cah = 0
+            if v_l > 0:
+                a_cah = (self.v ** 2 * a_bar) / (v_l ** 2 - alpha * gap * a_bar)
+
+                if v_l * (self.v - v_l) > -alpha * gap * a_bar:
+                    theta = 0
+                    if self.v - v_l >= 0:
+                        theta = 1
+                    a_cah = a_bar - theta * (self.v - v_l) ** 2 / (beta * gap)
+
+            gap_desired = self.min_gap + np.max(
+                [0, self.v * self.tau + self.v * (self.v - v_l) / (2 * np.sqrt(self.max_a * self.max_b))])
+
+            p1, p2 = 4, 8
+            a_free = self.max_a * (1 - (self.v / (self.v_max + EPS)) ** p1)
+
+            z = gap_desired / gap
+            if z < 1:
+                a_iidm = self.max_a * (1 - z ** p2)
+            else:
+                a_iidm = a_free * (1 - z ** (p2 * self.max_a / (a_free + EPS)))
+            a_cacc = a_iidm
+            # if a_iidm < a_cah and False:
+            #     a_cacc = (1 - c) * a_iidm + c * (a_cah + b * np.tanh((a_iidm - a_cah) / b))
+            if gap <= self.min_gap:
+                a_cacc = np.min([a_cacc, (v_l - self.v) / self.dt])
+            new_v = self.v + a_cacc * self.dt
+
+            self.gap = gap
+            # self.x = self.x + ((self.v + new_v) / 2) * self.dt
+            # self.a_actual = float(new_v - self.v) / self.dt
+            self.v = new_v
+            # print('Veh: %s, speed: %.2f, leader: id: %s, speed: %.2f' % (self.id, self.v, leader.id, leader.v))
+
