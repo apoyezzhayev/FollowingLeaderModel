@@ -91,11 +91,11 @@ class Vehicle:
 
     @property
     def v(self):
-        return vehicle.getSpeed(self.id)
+        return traci.vehicle.getSpeed(self.id)
 
-    @v.setter
-    def v(self, v):
+    def set_v(self, v):
         vehicle.setSpeed(self.id, v)
+        # traci.vehicle.slowDown(self.id, v, self.dt)
 
     @property
     def a_actual(self):
@@ -103,7 +103,7 @@ class Vehicle:
 
     def step_gm(self, leader=None, alpha=1):
         if leader is None:
-            self.v = -1  # max permitted speed with safety rules
+            self.set_v(-1)  # max permitted speed with safety rules
             return
         else:
             x_l, v_l = leader.x, leader.v
@@ -114,7 +114,7 @@ class Vehicle:
             new_v = np.max([0, new_v])
 
             # self.a_actual = float(new_v - self.v) / self.dt  # if one wants to write it
-            self.v = new_v
+            self.set_v(new_v)
             # We don't need to set it manually, SUMO will do it for us
             # self.x = self.x + ((self.v + new_v) / 2) * self.dt
 
@@ -124,7 +124,7 @@ class Vehicle:
         dt - size of the simulation step in seconds.
         '''
         if leader is None:
-            self.v = -1  # max permitted speed with safety rules
+            self.set_v(-1)  # max permitted speed with safety rules
             # print('Veh: %s, speed: %.2f' % (self.id, self.v))
             return
         else:
@@ -168,6 +168,6 @@ class Vehicle:
             self.gap = gap
             # self.x = self.x + ((self.v + new_v) / 2) * self.dt
             # self.a_actual = float(new_v - self.v) / self.dt
-            self.v = new_v
-            # print('Veh: %s, speed: %.2f, leader: id: %s, speed: %.2f' % (self.id, self.v, leader.id, leader.v))
+            self.set_v(new_v)
+
 
