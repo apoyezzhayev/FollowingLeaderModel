@@ -49,12 +49,15 @@ class Simulation:
         print('Starting simulation')
         # this is the normal way of using traci. sumo is started as a
         # subprocess and then the python script connects and runs
+        command_string = [sumoBinary,
+                          '-c', self.options.c,
+                          "--step-length", str(self.dt),
+                          "--remote-port", str(self._port)]
+        if self.options.a is not None:
+            command_string.extend(["-a", self.options.a])
+
         self.sumo_process = subprocess.Popen(
-            [sumoBinary, "-c", self.options.c,
-             "--step-length", str(self.dt),
-             "--remote-port", str(self._port),
-             # "-a", "maryland/edge_output_gen_GMModel.xml"
-             ], stdout=sys.stdout, stderr=sys.stderr)
+            command_string, stdout=sys.stdout, stderr=sys.stderr)
         print('Initialized traci on port %d' % self._port)
 
         traci.init(self._port)
@@ -75,6 +78,9 @@ class Simulation:
 # get_options function for SUMO
 def sumo_basic_parser():
     parser = argparse.ArgumentParser()
-    # parser.add_argument("--nogui", action="store_true", default=False, help="run the commandline version of sumo")
+    parser.add_argument("--nogui", action="store_true", default=False, help="run the commandline version of sumo")
+    parser.add_argument('-a', type=str, help='Additional files', default=None)  # "maryland/edge_output_gen_GMModel.xml"
     parser.add_argument("-c", type=str, help='path to config file', required=True)
+    parser.add_argument("-m", type=str, help='Type of model: gm | platoon', default='gm')
+    parser.add_argument('-s', type=int, help='Simulation time in seconds', default=100)
     return parser
