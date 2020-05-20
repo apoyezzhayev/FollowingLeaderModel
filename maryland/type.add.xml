@@ -1,0 +1,9 @@
+<additional>
+  <vType id="passenger" 
+  	maxSpeed="27" 
+  	vClass="passenger" 
+  	carFollowModel="Krauss"
+  	minGap="2"
+  	sigma="0.5"	
+  	tau="1.0"/>
+</additional>
