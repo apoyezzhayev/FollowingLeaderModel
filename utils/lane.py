@@ -22,7 +22,7 @@ class Lane:
     def alpha(self):
         density = self._buffer_state[1]
         if self.dv_dr is None:
-            return 1000
+            return 1
         else:
             return -density * self.dv_dr(density)
 

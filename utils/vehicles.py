@@ -70,7 +70,7 @@ class Vehicle:
 
     @property
     def leader_id(self):
-        return vehicle.getLeader(self.id, dist=300)
+        return vehicle.getLeader(self.id, dist=50)
 
     @property
     def v_max(self):
@@ -94,16 +94,15 @@ class Vehicle:
         return traci.vehicle.getSpeed(self.id)
 
     def set_v(self, v):
-        vehicle.setSpeed(self.id, v)
-        # traci.vehicle.slowDown(self.id, v, self.dt)
+        traci.vehicle.setSpeed(self.id, v)
 
     @property
     def a_actual(self):
         return vehicle.getAcceleration(self.id)
 
-    def step_gm(self, leader=None, alpha=1):
+    def step_gm(self, leader=None, alpha=13):
         if leader is None:
-            self.set_v(-1)  # max permitted speed with safety rules
+            self.set_v(self.v_max)  # max permitted speed with safety rules
             return
         else:
             x_l, v_l = leader.x, leader.v
@@ -111,11 +110,11 @@ class Vehicle:
             gap = x_l - self.x - self.l
             a_estimate = min(alpha * (v_l - self.v) / gap, self.max_a)
             new_v = self.v + a_estimate * self.dt
-            new_v = np.max([0, new_v])
-
-            # self.a_actual = float(new_v - self.v) / self.dt  # if one wants to write it
+            new_v = max(0., new_v)
             self.set_v(new_v)
+
             # We don't need to set it manually, SUMO will do it for us
+            # a_actual = float(new_v - self.v) / self.dt  # if one wants to write it
             # self.x = self.x + ((self.v + new_v) / 2) * self.dt
 
     def step_platoon(self, leader=None):
@@ -125,7 +124,6 @@ class Vehicle:
         '''
         if leader is None:
             self.set_v(-1)  # max permitted speed with safety rules
-            # print('Veh: %s, speed: %.2f' % (self.id, self.v))
             return
         else:
             x_l, v_l = leader.x, leader.v
@@ -154,18 +152,17 @@ class Vehicle:
             a_free = self.max_a * (1 - (self.v / (self.v_max + EPS)) ** p1)
 
             z = gap_desired / gap
-            if z < 1:
+            if z >= 1:
                 a_iidm = self.max_a * (1 - z ** p2)
             else:
                 a_iidm = a_free * (1 - z ** (p2 * self.max_a / (a_free + EPS)))
             a_cacc = a_iidm
-            # if a_iidm < a_cah and False:
-            #     a_cacc = (1 - c) * a_iidm + c * (a_cah + b * np.tanh((a_iidm - a_cah) / b))
             if gap <= self.min_gap:
                 a_cacc = np.min([a_cacc, (v_l - self.v) / self.dt])
             new_v = self.v + a_cacc * self.dt
 
-            self.gap = gap
+            # We don't need to set it manually
+            # self.gap = gap
             # self.x = self.x + ((self.v + new_v) / 2) * self.dt
             # self.a_actual = float(new_v - self.v) / self.dt
             self.set_v(new_v)

@@ -22,24 +22,12 @@ def run(run_time, opts):
         # Get lanes
         for step, t in sim:
             if (step % 100) == 0:
-                tqdm.write('Step %d: number of vehicles = %d' % (step, traci.simulation.getMinExpectedNumber()))
+                tqdm.write('Step %d: number of vehicles = %d' % (step, traci.vehicle.getIDCount()))
             lanes_sim.step()
             vehicles_sim.step()
-            # Add new vehciles to subscription
-
-            # positions = traci.vehicle.getAllSubscriptionResults()
-            # occupancies = traci.lane.getAllSubscriptionResults()
-            # print(occupancies)
-            # print("step %d" % step)
-
-        #     lanes_sim.step()
-        # lanes_sim.save('lanes_sim_data_innopolis.csv')
 
 
 if __name__ == "__main__":
     parser = sumo_basic_parser()
     options = parser.parse_args()
-    # options = parser.parse_args('-c maryland/testmap.sumocfg -m platoon --nogui'.split(' '))
-    # options = parser.parse_args('-c ../lab_1/inno.sumocfg'.split(' '))
-    # options = parser.parse_args('-c single_lane/hello.sumocfg'.split(' '))
     run(run_time=options.s, opts=options)
